@@ -1,5 +1,14 @@
 # Sui-VeriDocs 🛡️
 
+<p align="left">
+  <a href="https://sui.io/"><img src="https://img.shields.io/badge/Sui-Blockchain-4CA6FF?style=for-the-badge&logo=sui&logoColor=white" alt="Sui Blockchain" /></a>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
+  <a href="https://tatum.io/"><img src="https://img.shields.io/badge/Tatum-RPC_Node-FF6C37?style=for-the-badge" alt="Tatum RPC" /></a>
+  <a href="https://walrus.xyz/"><img src="https://img.shields.io/badge/Walrus-Storage-0EA5E9?style=for-the-badge" alt="Walrus Storage" /></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-v18+-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License" /></a>
+</p>
+
 **Sui-VeriDocs** is a decentralized digital notary system that provides secure, immutable, and instant document verification. Built for the **2026 Sui Developer Hackathon**, the project integrates **Sui Blockchain** for transaction anchoring, **Walrus Protocol** for decentralized metadata storage, and **Tatum RPC Gateway** for fast, high-availability mainnet node operations.
 
 ---
