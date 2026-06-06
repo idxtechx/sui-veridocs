@@ -9,7 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License" /></a>
 </p>
 
-**Sui-VeriDocs** is a decentralized digital notary system that provides secure, immutable, and instant document verification. Built for the **2026 Sui Developer Hackathon**, the project integrates **Sui Blockchain** for transaction anchoring, **Walrus Protocol** for decentralized metadata storage, and **Tatum RPC Gateway** for fast, high-availability mainnet node operations.
+**Sui-VeriDocs** is a decentralized digital notary system that provides secure, immutable, and instant document verification. Built for the **2026 Tatum X walrus Hackathon**, the project integrates **Sui Blockchain** for transaction anchoring, **Walrus Protocol** for decentralized metadata storage, and **Tatum RPC Gateway** for fast, high-availability mainnet node operations.
 
 ---
 
