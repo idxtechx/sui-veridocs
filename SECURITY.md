@@ -12,7 +12,7 @@ Only the latest version of Sui-VeriDocs is actively supported with security upda
 
 We take the security of Sui-VeriDocs seriously. If you find a security vulnerability, please do **NOT** open a public issue. Instead, report it privately.
 
-Please report any vulnerabilities via email to **security@sui-veridocs.xyz**.
+Please report any vulnerabilities via email to **amfaxspl@gmail.com**.
 
 In your report, please include:
 - A description of the vulnerability and its potential impact.
