@@ -28,10 +28,11 @@ type NotaryStep = "idle" | "hashing" | "storing" | "registering" | "success";
 export default function Home() {
   // Notarization State
   const [simStep, setSimStep] = useState<NotaryStep>("idle");
-  const [fileName, setFileName] = useState("hackathon_whitepaper.docx");
-  const [fileSize, setFileSize] = useState("1.8 MB");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("Belum ada file dipilih");
+  const [fileSize, setFileSize] = useState("");
   const [simProgress, setSimProgress] = useState(0);
-  const [realHash, setRealHash] = useState("a3bc89f927db4287ce9a");
+  const [realHash, setRealHash] = useState("");
   const [realTxHash, setRealTxHash] = useState<string | null>(null);
   const [realBlobId, setRealBlobId] = useState<string | null>(null);
 
@@ -170,6 +171,12 @@ export default function Home() {
   const resetSimulation = () => {
     setSimStep("idle");
     setSimProgress(0);
+    setSelectedFile(null);
+    setFileName("Belum ada file dipilih");
+    setFileSize("");
+    setRealHash("");
+    setRealTxHash(null);
+    setRealBlobId(null);
   };
 
   // Motion variants for stagger fade-in
@@ -641,19 +648,40 @@ export default function Home() {
                           className="hidden" 
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) startSimulation(file);
+                            if (file) {
+                              setSelectedFile(file);
+                              setFileName(file.name);
+                              setFileSize(`${(file.size / (1024 * 1024)).toFixed(2)} MB`);
+                            }
                           }}
                         />
                       </label>
                       
-                      <div className="mb-6">
-                        <span className="text-sm font-semibold text-white block">{fileName}</span>
-                        <span className="text-xs text-slate-400">{fileSize}</span>
+                      <div className="mb-4">
+                        <span className={`text-sm font-semibold block ${selectedFile ? "text-white" : "text-slate-400"}`}>{fileName}</span>
+                        {fileSize && <span className="text-xs text-slate-400">{fileSize}</span>}
+                        {selectedFile && (
+                          <button
+                            onClick={() => {
+                              setSelectedFile(null);
+                              setFileName("Belum ada file dipilih");
+                              setFileSize("");
+                            }}
+                            className="text-xs text-rose-400 hover:text-rose-300 hover:underline mt-1 block transition-colors"
+                          >
+                            Ganti File
+                          </button>
+                        )}
                       </div>
 
                       <button
-                        onClick={() => startSimulation()}
-                        className="glow-btn bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-8 py-3.5 rounded-xl text-sm transition-all duration-300 inline-flex items-center gap-2"
+                        onClick={() => { if (selectedFile) startSimulation(selectedFile); }}
+                        disabled={!selectedFile}
+                        className={`font-bold px-8 py-3.5 rounded-xl text-sm transition-all duration-300 inline-flex items-center gap-2 ${
+                          selectedFile
+                            ? "glow-btn bg-sky-500 hover:bg-sky-400 text-slate-950 cursor-pointer"
+                            : "bg-slate-700/50 text-slate-500 cursor-not-allowed"
+                        }`}
                       >
                         Notarize Document
                         <ArrowRight className="w-4 h-4" />
