@@ -92,9 +92,14 @@ export default function Verify() {
       const packageId = process.env.NEXT_PUBLIC_PACKAGE_ID;
       const registryId = process.env.NEXT_PUBLIC_REGISTRY_ID;
 
+      console.log("[VeriDocs Verify] Package ID:", packageId || "(NOT SET)");
+      console.log("[VeriDocs Verify] Registry ID:", registryId || "(NOT SET)");
+      console.log("[VeriDocs Verify] File hash:", hash);
+
       // 1. Try to verify via Sui Blockchain Smart Contract first
       if (packageId && registryId && packageId !== "your-package-id-here" && registryId !== "your-registry-object-id-here") {
         try {
+          console.log("[VeriDocs Verify] Querying Sui blockchain for hash:", hash);
           // Query the dynamic field from the shared Registry object directly
           const dfResponse = await suiClient.getDynamicFieldObject({
             parentId: registryId,
@@ -363,7 +368,7 @@ export default function Verify() {
                             </div>
 
                             <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                              This file fingerprint (SHA-256 hash) does not match any notarized documents recorded in this browser session. The file may have been modified, edited, corrupted, or it was never notarized on the Sui network.
+                              This file fingerprint (SHA-256 hash) does not match any notarized documents recorded on the Sui Blockchain registry. The file may have been modified, edited, corrupted, or it was never notarized through Sui-VeriDocs.
                             </p>
 
                             <div className="bg-slate-950/60 border border-white/5 rounded-xl p-5 text-xs md:text-sm flex justify-between items-center">
