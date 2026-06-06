@@ -162,6 +162,8 @@ export default function Home() {
       const errorMessage = err instanceof Error ? err.message : String(err);
       if (errorMessage.includes("Rejected")) {
         alert("Transaksi dibatalkan oleh pengguna.");
+      } else if (errorMessage.includes("dynamic_field::add") && (errorMessage.includes("abort code: 0") || errorMessage.includes("MoveAbort"))) {
+        alert("Gagal melakukan notarisasi: Dokumen dengan isi/hash ini sudah pernah dinotarisasi di blockchain sebelumnya! Silakan verifikasi file ini di menu 'Verify' atau coba dengan file lain.");
       } else {
         alert("Gagal melakukan notarisasi on-chain: " + errorMessage);
       }
