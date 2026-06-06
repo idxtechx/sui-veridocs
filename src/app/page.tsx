@@ -106,10 +106,27 @@ export default function Home() {
       setSimProgress(85);
 
       // REAL SUI CONNECTION: Sign and execute a transaction block using the user's connected wallet
-      // We perform a self-transfer of 0.0001 SUI (100,000 MIST) which executes on Mainnet in <1s and requires zero move contracts.
       const tx = new Transaction();
-      const [coin] = tx.splitCoins(tx.gas, [100000]);
-      tx.transferObjects([coin], walletAddress!);
+      const packageId = process.env.NEXT_PUBLIC_PACKAGE_ID;
+      const registryId = process.env.NEXT_PUBLIC_REGISTRY_ID;
+
+      if (packageId && registryId && packageId !== "your-package-id-here" && registryId !== "your-registry-object-id-here") {
+        // Option A: Call the Sui Move Smart Contract (On-Chain Registry)
+        tx.moveCall({
+          target: `${packageId}::veridocs::register_document`,
+          arguments: [
+            tx.object(registryId),
+            tx.pure.string(result.hash),
+            tx.pure.string(targetFile.name),
+            tx.pure.string(result.blobId || ""),
+            tx.pure.u64(Date.now())
+          ],
+        });
+      } else {
+        // Option B: Fallback to self-transfer of 0.0001 SUI if smart contract is not yet configured in .env.local
+        const [coin] = tx.splitCoins(tx.gas, [100000]);
+        tx.transferObjects([coin], walletAddress!);
+      }
 
       // Execute on SUI Mainnet
       const executeResult = await signAndExecute({ transaction: tx });

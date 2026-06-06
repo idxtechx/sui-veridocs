@@ -11,6 +11,7 @@ import {
   FileText
 } from "lucide-react";
 import Link from "next/link";
+import { useSuiClient } from "@mysten/dapp-kit";
 
 interface NotarizedDocument {
   name: string;
@@ -32,6 +33,7 @@ interface MatchedDocument {
 }
 
 export default function Verify() {
+  const suiClient = useSuiClient();
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isHashing, setIsHashing] = useState(false);
@@ -85,19 +87,64 @@ export default function Verify() {
       const hash = await calculateSHA256(selectedFile);
       setCalculatedHash(hash);
       
-      // Scan all localStorage keys for matching hashes
-      let foundDoc: NotarizedDocument | null = null;
-      let ownerAddr = "";
-      
-      if (typeof window !== "undefined") {
+      let foundDoc: MatchedDocument | null = null;
+
+      const packageId = process.env.NEXT_PUBLIC_PACKAGE_ID;
+      const registryId = process.env.NEXT_PUBLIC_REGISTRY_ID;
+
+      // 1. Try to verify via Sui Blockchain Smart Contract first
+      if (packageId && registryId && packageId !== "your-package-id-here" && registryId !== "your-registry-object-id-here") {
+        try {
+          // Query the dynamic field from the shared Registry object directly
+          const dfResponse = await suiClient.getDynamicFieldObject({
+            parentId: registryId,
+            name: {
+              type: "0x1::string::String",
+              value: hash
+            }
+          });
+
+          if (dfResponse.data && dfResponse.data.content) {
+            const content = dfResponse.data.content;
+            if (content.dataType === "moveObject") {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const fields = (content.fields as any).value?.fields;
+              if (fields) {
+                const nameVal = fields.name;
+                const blobIdVal = fields.blob_id;
+                const authorVal = fields.author;
+                const timestampVal = Number(fields.timestamp);
+                const txDigest = dfResponse.data.previousTransaction || "";
+
+                foundDoc = {
+                  name: nameVal || selectedFile.name,
+                  size: `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`,
+                  hash: hash,
+                  txHash: txDigest,
+                  blobId: blobIdVal || "",
+                  timestamp: new Date(timestampVal).toISOString().replace('T', ' ').slice(0, 19),
+                  ownerAddress: authorVal || ""
+                };
+              }
+            }
+          }
+        } catch (chainErr) {
+          console.error("Blockchain verification lookup failed, trying local storage:", chainErr);
+        }
+      }
+
+      // 2. Fallback: Scan all localStorage keys for matching hashes (compatibility with offline/local runs)
+      if (!foundDoc && typeof window !== "undefined") {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if (key && key.startsWith("veridocs_history_")) {
             const list = JSON.parse(localStorage.getItem(key) || "[]") as NotarizedDocument[];
             const match = list.find((doc: NotarizedDocument) => doc.hash === hash);
             if (match) {
-              foundDoc = match;
-              ownerAddr = key.replace("veridocs_history_", "");
+              foundDoc = {
+                ...match,
+                ownerAddress: key.replace("veridocs_history_", "")
+              };
               break;
             }
           }
@@ -105,10 +152,7 @@ export default function Verify() {
       }
 
       if (foundDoc) {
-        setMatchResult({
-          ...foundDoc,
-          ownerAddress: ownerAddr
-        });
+        setMatchResult(foundDoc);
       }
       
       setHasChecked(true);
