@@ -29,7 +29,7 @@ export default function Home() {
   // Notarization State
   const [simStep, setSimStep] = useState<NotaryStep>("idle");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState("Belum ada file dipilih");
+  const [fileName, setFileName] = useState("No file selected");
   const [fileSize, setFileSize] = useState("");
   const [simProgress, setSimProgress] = useState(0);
   const [realHash, setRealHash] = useState("");
@@ -64,7 +64,7 @@ export default function Home() {
     if (simStep !== "idle") return;
 
     if (!walletConnected) {
-      alert("Harap hubungkan Sui Wallet Anda terlebih dahulu melalui tombol di Navbar atau Dashboard!");
+      alert("Please connect your Sui Wallet first via the button in the Navbar or Dashboard!");
       return;
     }
 
@@ -101,7 +101,7 @@ export default function Home() {
       const result = await res.json();
       
       if (!res.ok || !result.success) {
-        throw new Error(result.error || "Gagal memproses file di backend.");
+        throw new Error(result.error || "Failed to process file in the backend.");
       }
 
       setSimProgress(85);
@@ -161,11 +161,11 @@ export default function Home() {
       setSimStep("idle");
       const errorMessage = err instanceof Error ? err.message : String(err);
       if (errorMessage.includes("Rejected")) {
-        alert("Transaksi dibatalkan oleh pengguna.");
+        alert("Transaction rejected by user.");
       } else if (errorMessage.includes("dynamic_field::add") && (errorMessage.includes("abort code: 0") || errorMessage.includes("MoveAbort"))) {
-        alert("Gagal melakukan notarisasi: Dokumen dengan isi/hash ini sudah pernah dinotarisasi di blockchain sebelumnya! Silakan verifikasi file ini di menu 'Verify' atau coba dengan file lain.");
+        alert("Notarization failed: A document with this content/hash has already been notarized on the blockchain! Please verify this file in the 'Verify' menu or try a different file.");
       } else {
-        alert("Gagal melakukan notarisasi on-chain: " + errorMessage);
+        alert("Failed to perform on-chain notarization: " + errorMessage);
       }
     }
   };
@@ -174,7 +174,7 @@ export default function Home() {
     setSimStep("idle");
     setSimProgress(0);
     setSelectedFile(null);
-    setFileName("Belum ada file dipilih");
+    setFileName("No file selected");
     setFileSize("");
     setRealHash("");
     setRealTxHash(null);
@@ -666,12 +666,12 @@ export default function Home() {
                           <button
                             onClick={() => {
                               setSelectedFile(null);
-                              setFileName("Belum ada file dipilih");
+                              setFileName("No file selected");
                               setFileSize("");
                             }}
                             className="text-xs text-rose-400 hover:text-rose-300 hover:underline mt-1 block transition-colors"
                           >
-                            Ganti File
+                            Change File
                           </button>
                         )}
                       </div>
@@ -841,7 +841,7 @@ export default function Home() {
                           onClick={(e) => {
                             if (!realTxHash) {
                               e.preventDefault();
-                              alert("Harap lakukan verifikasi dokumen terlebih dahulu!");
+                              alert("Please verify the document first!");
                             }
                           }}
                         >

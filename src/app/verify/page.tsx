@@ -163,7 +163,7 @@ export default function Verify() {
       setHasChecked(true);
     } catch (err) {
       console.error("Error hashing file", err);
-      alert("Gagal memproses dan menghitung hash file.");
+      alert("Failed to process and calculate file hash.");
     } finally {
       setIsHashing(false);
     }
